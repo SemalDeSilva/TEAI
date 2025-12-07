@@ -13,7 +13,7 @@ This repo is organised around *four main components*, each owned by one team mem
 
 ---
 
-## 1. Component 1 – Vision-Based Tea Taster (Member 1)
+## 1. Component 1 – Vision-Based Tea Taster (De Silva P.S - IT22223326)
 
 *Goal:*  
 Mimic a *human tea taster’s visual evaluation* by analysing tea leaf/powder images and generating *descriptive adjectives* and quality notes (e.g. “more blackish with slight reddish note, good twist”).
@@ -42,7 +42,7 @@ Mimic a *human tea taster’s visual evaluation* by analysing tea leaf/powder im
 
 ---
 
-## 2. Component 2 – Plucking Quality Grading (Member 2)
+## 2. Component 2 – Plucking Quality Grading (Shavinda G.M.V - IT22224248)
 
 *Goal:*  
 Evaluate *tea plucking quality* based on the classic standard *“two leaves and one bud”*, and classify each sample into:
@@ -81,7 +81,7 @@ This gives the factory a *quantitative plucking quality report* for each batch.
 
 ---
 
-## 3. Component 3 – Withering Moisture & Optimal Withering Time (Member 3)
+## 3. Component 3 – Withering Moisture & Optimal Withering Time (Sooriyaarachchi N.D - IT22254702)
 
 *Goal:*  
 Estimate *moisture content* during the *withering stage* and suggest *optimal withering duration* under current environmental conditions.
@@ -117,7 +117,7 @@ Estimate *moisture content* during the *withering stage* and suggest *optimal wi
 
 ---
 
-## 4. Component 4 – Auction Price Prediction & Foreign Particle Detection (Member 4)
+## 4. Component 4 – Auction Price Prediction & Foreign Particle Detection (Liyanage S.N - IT22211996)
 
 This member handles *two complementary sub-components* that use quality and process data to support *market decisions* and *safety/QC*.
 
