@@ -128,15 +128,14 @@ Predict the *likely auction price* for a tea batch based on quality metrics and 
 
 *Inputs may include:*
 
-- Visual quality scores (from Components 1 & 2)  
-- Withering characteristics (from Component 3)  
-- Grade, origin, factory, season  
+- Region, Estate, Grade, Exchange Rate (LKR/USD), Rainfall, Date / Seasonality  
 - Historical auction data
 
 *Outputs:*
 
-- Predicted *price per kg* or *price band*.
+- Predicted *price per kg*.
 - Useful for:
+  - Predicting auction bid prices
   - Planning production
   - Negotiating with buyers
   - Comparing batches and optimising quality for target markets.
