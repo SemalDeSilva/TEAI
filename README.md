@@ -169,39 +169,67 @@ Detect *foreign objects* mixed with tea during *final manufacturing / packing*, 
 
 ---
 
-## Project Structure (Suggested)
+---
+
+## Repository Structure (Backend + Components)
+
+This repository is organised so **each component can be developed independently** by different team members, while still integrating through a single **FastAPI backend** running on the PC (the same machine that runs model inference). The **frontend can call each component separately** via its own API endpoint.
+
+### Backend (FastAPI on PC)
 
 ```bash
 TEAI/
-│
-├── component_1_tea_taster/          # Vision + adjectives + RL feedback
-│   ├── data/
-│   ├── models/
-│   └── notebooks/
-│
-├── component_2_plucking_quality/    # 2 leaves + 1 bud grading
-│   ├── data/
-│   ├── models/
-│   └── conveyor_pipeline/
-│
-├── component_3_withering_moisture/  # Moisture + optimal withering time
-│   ├── data/
-│   ├── models/
-│   └── analysis/
-│
-├── component_4_price_fp/            # Auction price + foreign particle detection
-│   ├── price_prediction/
-│   └── foreign_particle_detection/
-│
-├── common_utils/
-│   ├── image_processing.py
-│   ├── data_preprocessing.py
-│   └── evaluation_metrics.py
-│
-├── docs/
-│   ├── architecture_diagram.png
-│   └── component_overview.md
-│
-├── README.md
-├── requirements.txt
-└── LICENSE
+└── backend/
+    ├── app/
+    │   ├── main.py                      # FastAPI entrypoint (mounts /api/v1)
+    │   ├── core/                        # config, logging, shared dependencies
+    │   ├── api/v1/
+    │   │   ├── router.py                # includes endpoint routers
+    │   │   └── endpoints/
+    │   │       ├── health.py            # GET /api/v1/health
+    │   │       ├── modules.py           # GET /api/v1/modules (which components are enabled)
+    │   │       ├── foreign_obj.py       # Foreign particle detection (detect + detect-and-act)
+    │   │       ├── iot.py               # PC ↔ Arduino Serial control (stop/start/status)
+    │   │       ├── taster.py            # Component 1 API
+    │   │       ├── plucking.py          # Component 2 API
+    │   │       ├── withering.py         # Component 3 API
+    │   │       └── auction.py           # Component 4 API (price)
+    │   ├── schemas/                    # Pydantic request/response models
+    │   ├── services/                   # business logic (calls ML + logs + IoT actions)
+    │   ├── ml/                         # model loaders + inference wrappers (.pt / .pkl)
+    │   ├── serial_comm/                # USB Serial manager + STOP/START protocol
+    │   ├── persistence/                # file logs now; optional DB layer later
+    │   ├── utils/                      # helpers (images, ids, time)
+    │   └── tests/                      # API tests (mock serial + mock ML)
+    ├── models_store/                   # saved trained models by component/version
+    │   ├── foreign_obj/v1/best.pt
+    │   ├── taster/v1/...
+    │   ├── plucking/v1/best.pt
+    │   ├── withering/v1/model.pkl
+    │   └── auction/v1/model.pkl
+    ├── uploads/                        # optional image/frame storage
+    ├── logs/                           # JSONL event logs + app logs
+    ├── requirements.txt
+    └── README.md
+```
+
+### Component-to-API mapping (for frontend integration)
+
+| Component | API Endpoint (examples) | Owner updates here |
+|---|---|---|
+| Foreign Particle Detection + Conveyor Stop | `/api/v1/foreign-obj/*` + `/api/v1/iot/*` | `backend/app/ml/foreign_obj/`, `backend/app/services/foreign_obj_service.py` |
+| Component 1 – Tea Taster | `/api/v1/taster/evaluate` | `backend/app/ml/taster/`, `backend/app/services/taster_service.py` |
+| Component 2 – Plucking Quality | `/api/v1/plucking/grade` | `backend/app/ml/plucking/`, `backend/app/services/plucking_service.py` |
+| Component 3 – Withering Prediction | `/api/v1/withering/predict` | `backend/app/ml/withering/`, `backend/app/services/withering_service.py` |
+| Component 4 – Auction Price | `/api/v1/auction/predict` | `backend/app/ml/auction/`, `backend/app/services/auction_service.py` |
+
+### Where to place your trained models
+- Put **YOLO/PyTorch `.pt`** files in: `backend/models_store/<component>/v1/`
+- Put **sklearn/CatBoost `.pkl`** files in: `backend/models_store/<component>/v1/`
+- If your model needs extra assets (scalers/encoders/labels), keep them in the **same version folder**.
+
+### Team workflow (simple rule)
+Each member should:
+1. Update only their component’s `ml/` wrapper and `services/` logic.
+2. Keep API contracts stable (schemas in `backend/app/schemas/`).
+3. Add a short note in `backend/README.md` describing how to run/test that component.
