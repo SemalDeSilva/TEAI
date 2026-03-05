@@ -1,0 +1,8 @@
+{
+  "classes": [
+    "Below Best",
+    "Best",
+    "Poor"
+  ],
+  "img_size": 224
+}
